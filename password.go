@@ -7,14 +7,30 @@ import (
 	"crypto/sha512"
 	"encoding/base64"
 	"encoding/hex"
+	"errors"
 	"io"
 	"strings"
 
 	"golang.org/x/crypto/bcrypt"
 )
 
+// MinLength sets minimum acceptable Passphrase length
+// version sets indicator to be inserted into output string
+var (
+	MinLength = 8
+	version   = "v1"
+)
+
 //Hash return the encrypted hash of a password
 func Hash(password, masterKey string) (string, error) {
+	// Check for non-nil password and masterKey
+	if len(password) < MinLength {
+		return "", errors.New("password/passphrase length must be at least 8")
+	}
+	if len(masterKey) != 32 {
+		return "", errors.New("masterkey length must be 32")
+	}
+
 	plaintext := []byte(password)
 
 	//1) First, the plaintext password is transformed into a hash value using SHA512
@@ -49,7 +65,7 @@ func Hash(password, masterKey string) (string, error) {
 	strHash := hex.EncodeToString(ciphertext)
 	b64Nonce := base64.StdEncoding.EncodeToString(nonce)
 
-	return "aes256$" + b64Nonce + "$" + strHash, nil
+	return "aes256" + version + "$" + b64Nonce + "$" + strHash, nil
 }
 
 //IsValid checks if a password match this hash
