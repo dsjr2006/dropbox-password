@@ -3,14 +3,16 @@ Securely stores your passwords as Dropbox do
 
 ##Get the library
 
-`go get github.com/mishudark/dropbox-password`
+`go get github.com/dsjr2006/dropbox-password`
+
+*Note the package is named 'password' so you must reference it that way unless you import it with an alias.* See examples below.
 
 ##Encrypt a password
 The function needs two arguments, `plaintext password` and a **32 chars length** `masterkey`
 ```go
   package main
   
-  import "github.com/mishudark/dropbox-password"
+  import "github.com/dsjr2006/dropbox-password"
   
   func main() {
     hash, err := password.Hash("mishudark", "AES256Key-32Characters1234567890")
@@ -23,7 +25,7 @@ The function needs three arguments , `plaintext password`, `hashed password` and
 ```go
   package main
   
-  import "github.com/mishudark/dropbox-password"
+  import "github.com/dsjr2006/dropbox-password"
   
   func main() {
     ok := password.IsValid("mishudark", "aes256$mh68GJ7t9mLYiJKk$7ab22349...", "AES256Key-32Characters1234567890")
@@ -33,6 +35,7 @@ The function needs three arguments , `plaintext password`, `hashed password` and
 ```
 
 ###Details of implementation
+This is based on [github.com/mishudark/dropbox-password](github.com/mishudark/dropbox-password), some differences being that it uses blake2b instead of SHA2 for the initial hash because it's faster and "better" (more than twice as fast on a 3.1 GHz Intel Core i7 - Mobile Dual Core). Also a version is prepended to the password hash so that upgrades to the password storage could be implemented more easily in the future by allowing version checking.
 
 ![Image of dropbox]
 (https://dropboxtechblog.files.wordpress.com/2016/09/layers.png?w=650&h=443)

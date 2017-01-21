@@ -4,13 +4,13 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
-	"crypto/sha512"
 	"encoding/base64"
 	"encoding/hex"
 	"errors"
 	"io"
 	"strings"
 
+	blake2b "github.com/dsjr2006/blake2b-simd"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -33,10 +33,10 @@ func Hash(password, masterKey string) (string, error) {
 
 	plaintext := []byte(password)
 
-	//1) First, the plaintext password is transformed into a hash value using SHA512
-	hash512 := sha512.Sum512(plaintext)
+	//1) First, the plaintext password is transformed into a hash value using Blake2b
+	hash512 := blake2b.Sum512(plaintext)
 
-	//2) SHA512 hash is hashed again using bcrypt with a cost of 10, and a unique, per-user salt
+	//2) Blake2b hash is hashed again using bcrypt with a cost of 10, and a unique, per-user salt
 	bcryptHash, err := bcrypt.GenerateFromPassword(hash512[:], 10)
 	if err != nil {
 		return "", err
@@ -101,6 +101,6 @@ func IsValid(password, hash, masterKey string) bool {
 		return false
 	}
 
-	hash512 := sha512.Sum512([]byte(password))
+	hash512 := blake2b.Sum512([]byte(password))
 	return bcrypt.CompareHashAndPassword(plaintext, hash512[:]) == nil
 }
