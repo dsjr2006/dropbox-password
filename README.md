@@ -1,6 +1,9 @@
 # dropbox-password
 Securely stores your passwords as Dropbox do
-
+---
+<a href="https://goreportcard.com/report/github.com/dsjr2006/dropbox-password"><img src="https://goreportcard.com/badge/github.com/dsjr2006/dropbox-password"></a>
+	<br>
+---
 ##Get the library
 
 `go get github.com/dsjr2006/dropbox-password`
